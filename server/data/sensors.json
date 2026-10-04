@@ -1,0 +1,15 @@
+{
+  "KA-2417": [
+    { "time": "10:15:00", "egt": 736, "vibration": 4.82, "oilPressure": 53, "hydraulicTemp": 75, "hydraulicPressure": 2915, "avionicsTemp": 45, "subsystemHealth": 56 },
+    { "time": "10:15:02", "egt": 742, "vibration": 5.01, "oilPressure": 52, "hydraulicTemp": 76, "hydraulicPressure": 2902, "avionicsTemp": 46, "subsystemHealth": 55 },
+    { "time": "10:15:04", "egt": 747, "vibration": 5.16, "oilPressure": 51, "hydraulicTemp": 77, "hydraulicPressure": 2891, "avionicsTemp": 46, "subsystemHealth": 54 }
+  ],
+  "KA-2404": [
+    { "time": "10:15:00", "egt": 785, "vibration": 6.41, "oilPressure": 46, "hydraulicTemp": 93, "hydraulicPressure": 2510, "avionicsTemp": 52, "subsystemHealth": 42 },
+    { "time": "10:15:02", "egt": 792, "vibration": 6.63, "oilPressure": 45, "hydraulicTemp": 94, "hydraulicPressure": 2490, "avionicsTemp": 52, "subsystemHealth": 41 }
+  ],
+  "default": [
+    { "time": "10:15:00", "egt": 650, "vibration": 1.7, "oilPressure": 68, "hydraulicTemp": 71, "hydraulicPressure": 3000, "avionicsTemp": 43, "subsystemHealth": 95 },
+    { "time": "10:15:02", "egt": 653, "vibration": 1.8, "oilPressure": 67, "hydraulicTemp": 72, "hydraulicPressure": 2995, "avionicsTemp": 44, "subsystemHealth": 95 }
+  ]
+}

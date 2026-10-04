@@ -1,0 +1,28 @@
+[
+  {
+    "id": "SP-101",
+    "partNumber": "BRG-AL31-77",
+    "name": "High-Pressure Turbine Bearing Set",
+    "category": "Propulsion",
+    "baseAlphaStock": 4,
+    "baseBravoStock": 2,
+    "baseCharlieStock": 1,
+    "minRequired": 3,
+    "unitCost": "₹14,50,000",
+    "leadTimeDays": 4,
+    "status": "low"
+  },
+  {
+    "id": "SP-107",
+    "partNumber": "SEAL-KIT-SK84",
+    "name": "Hydraulic Actuator Fluoropolymer Seal Kit",
+    "category": "Consumables",
+    "baseAlphaStock": 22,
+    "baseBravoStock": 14,
+    "baseCharlieStock": 2,
+    "minRequired": 8,
+    "unitCost": "₹38,000",
+    "leadTimeDays": 1,
+    "status": "low"
+  }
+]

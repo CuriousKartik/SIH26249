@@ -3,6 +3,7 @@ import { INITIAL_AIRCRAFT_DATA } from '../data/aircraftData';
 import { INITIAL_PREDICTIVE_ALERTS, STREAM_TICKER_ALERTS } from '../data/alertsData';
 import { INITIAL_SPARES, INITIAL_MAINTENANCE_SCHEDULE, INITIAL_WORK_ORDERS } from '../data/sparesData';
 import { generateSubsystemSensorReading } from '../data/sensorGenerator';
+import { getAlerts, getFleet, getSpares, postSimulateFault, postWorkOrder } from '../services/api';
 
 const FleetContext = createContext(null);
 
@@ -18,9 +19,52 @@ export function FleetProvider({ children }) {
   const [isScheduleOptimized, setIsScheduleOptimized] = useState(false);
   const [tick, setTick] = useState(0);
   const [downtimeSaved, setDowntimeSaved] = useState(142.5);
+  const [isFaultSimulationRunning, setIsFaultSimulationRunning] = useState(false);
 
   // Selected aircraft helper
   const selectedAircraft = fleet.find(a => a.id === selectedAircraftId) || fleet[0];
+
+  // The API augments the bundled demo data when the optional mock server is running.
+  // Each request is failure-safe so static deployments retain their local data.
+  useEffect(() => {
+    let isCurrent = true;
+
+    Promise.all([getFleet(), getAlerts(), getSpares()]).then(([remoteFleet, remoteAlerts, remoteSpares]) => {
+      if (!isCurrent) return;
+
+      if (Array.isArray(remoteFleet)) {
+        setFleet(currentFleet => currentFleet.map((aircraft) => {
+          const remoteAircraft = remoteFleet.find(item => item.id === aircraft.id);
+          if (!remoteAircraft) return aircraft;
+
+          const mergedSubsystems = { ...aircraft.subsystems, ...remoteAircraft.subsystems };
+          Object.keys(remoteAircraft.subsystems || {}).forEach((key) => {
+            mergedSubsystems[key] = { ...aircraft.subsystems[key], ...remoteAircraft.subsystems[key] };
+          });
+
+          return { ...aircraft, ...remoteAircraft, subsystems: mergedSubsystems };
+        }));
+      }
+
+      if (Array.isArray(remoteAlerts)) {
+        setAlerts(currentAlerts => [
+          ...remoteAlerts,
+          ...currentAlerts.filter(alert => !remoteAlerts.some(remoteAlert => remoteAlert.id === alert.id))
+        ]);
+      }
+
+      if (Array.isArray(remoteSpares)) {
+        setSpares(currentSpares => currentSpares.map((spare) => {
+          const remoteSpare = remoteSpares.find(item => item.id === spare.id);
+          return remoteSpare ? { ...spare, ...remoteSpare } : spare;
+        }));
+      }
+    });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, []);
 
   // Sensor reading updates every 1.5s (baseline + sin + noise + upward drift for faulty)
   useEffect(() => {
@@ -130,6 +174,77 @@ export function FleetProvider({ children }) {
       timestamp: new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })
     };
     setLiveTickerAlerts(prev => [notice, ...prev]);
+
+    // Keep the UI instant; the optional API persists the same mock work order.
+    postWorkOrder(newOrder);
+  };
+
+  const simulateFault = async (aircraftId = selectedAircraftId) => {
+    const aircraft = fleet.find(item => item.id === aircraftId) || selectedAircraft;
+    if (!aircraft || isFaultSimulationRunning) return;
+
+    setIsFaultSimulationRunning(true);
+
+    const fallbackAlert = {
+      id: `SIM-${Date.now()}`,
+      tailNumber: aircraft.tailNumber,
+      base: aircraft.base,
+      component: 'Engine 2',
+      issue: 'Simulated Engine 2 vibration anomaly: 86% failure probability in ~36 flight hours',
+      severity: 'high',
+      failureProbability: 86,
+      rulHours: 36,
+      timestamp: 'just now',
+      acknowledged: false,
+      workOrderId: null,
+      shapFactors: [
+        { feature: 'High-frequency vibration', impact: 0.41, direction: 'increase' },
+        { feature: 'Oil-pressure decline', impact: 0.24, direction: 'increase' }
+      ],
+      recommendedAction: 'Inspect the Engine 2 bearing assembly during the next maintenance window.'
+    };
+
+    try {
+      const response = await postSimulateFault(aircraft);
+      const alert = response?.alert || fallbackAlert;
+      const aircraftPatch = response?.aircraftPatch || {
+        status: 'degraded',
+        healthScore: Math.min(aircraft.healthScore, 58),
+        predictedFailureDays: 2,
+        activeAlert: alert.issue,
+        subsystems: {
+          engine2: {
+            health: 48,
+            egt: 762,
+            vibration: 5.4,
+            oilPressure: 49,
+            rulHours: alert.rulHours,
+            status: 'warning'
+          }
+        }
+      };
+
+      setFleet(currentFleet => currentFleet.map((item) => {
+        if (item.id !== aircraft.id) return item;
+
+        const patchedSubsystems = { ...item.subsystems, ...aircraftPatch.subsystems };
+        Object.keys(aircraftPatch.subsystems || {}).forEach((key) => {
+          patchedSubsystems[key] = { ...item.subsystems[key], ...aircraftPatch.subsystems[key] };
+        });
+
+        return { ...item, ...aircraftPatch, subsystems: patchedSubsystems };
+      }));
+      setAlerts(currentAlerts => [alert, ...currentAlerts.filter(item => item.id !== alert.id)]);
+      setLiveTickerAlerts(currentAlerts => [{
+        id: `SIM-TICK-${Date.now()}`,
+        tail: aircraft.tailNumber,
+        text: `Simulated fault injected: ${alert.component} anomaly detected on ${aircraft.tailNumber}`,
+        type: 'critical',
+        timestamp: new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })
+      }, ...currentAlerts.slice(0, 19)]);
+    } finally {
+      setIsFaultSimulationRunning(false);
+    }
   };
 
   // Optimize Schedule Action
@@ -169,6 +284,8 @@ export function FleetProvider({ children }) {
         downtimeSaved,
         acknowledgeAlert,
         createWorkOrder,
+        simulateFault,
+        isFaultSimulationRunning,
         kpis: {
           totalAircraft,
           operationalCount,

@@ -1,0 +1,20 @@
+{
+  "component": "Engine 2",
+  "severity": "high",
+  "failureProbability": 86,
+  "rulHours": 36,
+  "issue": "Simulated Engine 2 vibration anomaly: 86% failure probability in ~36 flight hours",
+  "recommendedAction": "Inspect the Engine 2 bearing assembly during the next maintenance window.",
+  "shapFactors": [
+    { "feature": "High-frequency vibration", "impact": 0.41, "direction": "increase" },
+    { "feature": "Oil-pressure decline", "impact": 0.24, "direction": "increase" }
+  ],
+  "subsystemPatch": {
+    "health": 48,
+    "egt": 762,
+    "vibration": 5.4,
+    "oilPressure": 49,
+    "rulHours": 36,
+    "status": "warning"
+  }
+}

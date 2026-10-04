@@ -1,0 +1,42 @@
+[
+  {
+    "id": "KA-2417",
+    "tailNumber": "KA-2417",
+    "type": "Tejas Mk1A",
+    "base": "Base Charlie",
+    "command": "Southern Air Command (SAC)",
+    "commandCode": "SAC",
+    "city": "Coimbatore, Tamil Nadu",
+    "status": "degraded",
+    "healthScore": 67,
+    "flightHours": 1836,
+    "sortiesCount": 406,
+    "lastMaintenance": "2026-09-21",
+    "nextScheduledCheck": "2026-10-10",
+    "subsystems": {
+      "engine1": { "health": 91, "egt": 654, "vibration": 1.8, "oilPressure": 67, "rulHours": 860, "status": "nominal" },
+      "engine2": { "health": 56, "egt": 744, "vibration": 5.1, "oilPressure": 51, "rulHours": 42, "status": "warning" },
+      "hydraulics": { "health": 88, "pressure": 2900, "temp": 77, "responseTime": 138, "status": "nominal" },
+      "avionics": { "health": 93, "coreTemp": 46, "busErrorRate": 0.03, "signalIntegrity": 99.0, "status": "nominal" },
+      "landingGear": { "health": 89, "actuatorLoad": 86, "brakeWear": 29, "tirePressure": 196, "status": "nominal" }
+    },
+    "predictedFailureDays": 2,
+    "activeAlert": "Engine 2 bearing wear anomaly"
+  },
+  {
+    "id": "KA-2404",
+    "tailNumber": "KA-2404",
+    "type": "Rafale-EH Golden Arrows",
+    "base": "Ambala AFS",
+    "command": "Western Air Command (WAC)",
+    "commandCode": "WAC",
+    "city": "Ambala, Haryana",
+    "status": "critical",
+    "healthScore": 42,
+    "subsystems": {
+      "engine1": { "health": 41, "egt": 795, "vibration": 6.8, "oilPressure": 44, "rulHours": 18, "status": "critical" }
+    },
+    "predictedFailureDays": 1,
+    "activeAlert": "Critical Engine 1 harmonic vibration"
+  }
+]

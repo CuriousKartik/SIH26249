@@ -25,7 +25,9 @@ export function FleetCommand({ onNavigateToTwin, onNavigateToAlerts, onNavigateT
     selectedAircraftId, 
     setSelectedAircraftId,
     selectedAircraft,
-    isScheduleOptimized 
+    isScheduleOptimized,
+    simulateFault,
+    isFaultSimulationRunning
   } = useFleet();
 
   const [activeTab, setActiveTab] = useState('sensors');
@@ -111,6 +113,15 @@ export function FleetCommand({ onNavigateToTwin, onNavigateToAlerts, onNavigateT
             >
               <Activity size={14} className="text-indigo-600" />
               <span>Digital Twin ({selectedAircraftId})</span>
+            </button>
+
+            <button
+              onClick={() => simulateFault(selectedAircraftId)}
+              disabled={isFaultSimulationRunning}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 disabled:opacity-60 text-white font-medium text-xs shadow-sm transition-colors"
+            >
+              <AlertOctagon size={14} />
+              <span>{isFaultSimulationRunning ? 'Injecting Fault...' : 'Simulate Fault'}</span>
             </button>
           </div>
         </div>

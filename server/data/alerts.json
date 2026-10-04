@@ -1,0 +1,38 @@
+[
+  {
+    "id": "ALT-101",
+    "tailNumber": "KA-2417",
+    "base": "Base Charlie",
+    "component": "Engine 2",
+    "issue": "Engine 2 bearing wear: 87% failure probability in ~42 flight hours",
+    "severity": "high",
+    "failureProbability": 87,
+    "rulHours": 42,
+    "timestamp": "2 mins ago",
+    "acknowledged": false,
+    "workOrderId": null,
+    "shapFactors": [
+      { "feature": "High-frequency harmonic vibration", "impact": 0.42, "direction": "increase" },
+      { "feature": "Oil scavenge temperature delta", "impact": 0.28, "direction": "increase" }
+    ],
+    "recommendedAction": "Stage a bearing replacement assembly and schedule an inspection at Base Charlie."
+  },
+  {
+    "id": "ALT-102",
+    "tailNumber": "KA-2404",
+    "base": "Ambala AFS",
+    "component": "Engine 1",
+    "issue": "Critical spool-bearing harmonic vibration: 94% failure probability in ~18 flight hours",
+    "severity": "critical",
+    "failureProbability": 94,
+    "rulHours": 18,
+    "timestamp": "5 mins ago",
+    "acknowledged": false,
+    "workOrderId": null,
+    "shapFactors": [
+      { "feature": "Peak vibration amplitude", "impact": 0.48, "direction": "increase" },
+      { "feature": "Lube-oil pressure drop", "impact": 0.29, "direction": "increase" }
+    ],
+    "recommendedAction": "Ground the aircraft and complete a borescope inspection before the next sortie."
+  }
+]
