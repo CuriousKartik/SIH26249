@@ -30,6 +30,7 @@ import {
 } from 'recharts';
 import { useFleet } from '../context/FleetContext';
 import { generateSubsystemSensorReading, generateHistoricalPoints } from '../data/sensorGenerator';
+import { getAircraftSensors } from '../services/api';
 
 export function AircraftDetail({ onNavigateBack }) {
   const { 
@@ -66,6 +67,21 @@ export function AircraftDetail({ onNavigateBack }) {
       setHistoryData(initialPoints);
     }
   }, [currentAircraft.id, activeSubsystem]);
+
+  // Use server samples when available, while retaining generated telemetry offline.
+  useEffect(() => {
+    let isCurrent = true;
+
+    getAircraftSensors(currentAircraft.id).then((payload) => {
+      if (isCurrent && Array.isArray(payload?.readings) && payload.readings.length > 0) {
+        setHistoryData(payload.readings);
+      }
+    });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [currentAircraft.id]);
 
   // Append live telemetry point when tick changes
   useEffect(() => {
